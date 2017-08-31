@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/ARTest.unity
+- path: Assets/Scenes/scenePrompt.unity
   isLoaded: 1
   isActive: 1
