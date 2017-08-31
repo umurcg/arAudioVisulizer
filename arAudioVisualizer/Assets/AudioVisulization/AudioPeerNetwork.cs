@@ -6,7 +6,7 @@ using System.Linq;
 /// Gets spectrum of frequencies at every fixed update and share this through network
 /// </summary>
 
-public class AudioPeer : NetworkBehaviour {
+public class AudioPeerNetwork : NetworkBehaviour {
 
     
     AudioSource audioSource;

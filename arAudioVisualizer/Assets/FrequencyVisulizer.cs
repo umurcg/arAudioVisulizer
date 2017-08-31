@@ -1,15 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum axis { x=0,y=1,z=2};
+
 public class FrequencyVisulizer : MonoBehaviour {
 
     public int numberOfCubes = 512;
     public GameObject[] cubes;
     public float radius;
-    public AudioPeer AP;
-    public float maxYScale = 10;
+    public float maxScale = 10;
     public float cubeScale = 1;
    
+    public axis Axis=axis.y;
+
+
 
 	// Use this for initialization
 	void Start () {
@@ -27,13 +31,7 @@ public class FrequencyVisulizer : MonoBehaviour {
         }
 	}
 	
-	// Update is called once per frame
-	void Update ()
-    {
-
-
-    }
-
+	
     public void updateVisulizer(float[] samples)
     {
 
@@ -42,7 +40,24 @@ public class FrequencyVisulizer : MonoBehaviour {
         for (int i = 0; i < numberOfCubes; i++)
         {
             Vector3 scale = Vector3.one * cubeScale;
-            scale.y = samples[i] * maxYScale;
+
+
+            switch (Axis)
+            {
+                case (axis.x):
+                    scale.x= samples[i] * maxScale;
+                    break;
+                case (axis.y):
+                    scale.y= samples[i] * maxScale;
+                    break;
+                case (axis.z):
+                    scale.z= samples[i] * maxScale;
+                    break;
+
+            }
+                
+
+            //scale.y = samples[i] * maxScale;
             cubes[i].transform.localScale = scale;
 
         }
