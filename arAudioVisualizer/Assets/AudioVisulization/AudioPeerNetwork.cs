@@ -39,18 +39,18 @@ public class AudioPeerNetwork : NetworkBehaviour {
  
 	}
 
-    public void OnConnected(NetworkConnection conn, NetworkReader reader)
-    {
-       conn.SetChannelOption(Channels.DefaultReliable, ChannelOption.MaxPendingBuffers, 64);
-        Debug.Log("New client is connected");
-    }
+    //public void OnConnected(NetworkConnection conn, NetworkReader reader)
+    //{
+    //   conn.SetChannelOption(Channels.DefaultReliable, ChannelOption.MaxPendingBuffers, 64);
+    //    Debug.Log("New client is connected");
+    //}
 
 
-    [ContextMenu("Change pending buffer rate")]
-    public void setChannelBufferLimit()
-    {
-        connectionToClient.SetChannelOption(Channels.DefaultReliable, ChannelOption.MaxPendingBuffers, 64);
-    }
+    //[ContextMenu("Change pending buffer rate")]
+    //public void setChannelBufferLimit()
+    //{
+    //    connectionToClient.SetChannelOption(Channels.DefaultReliable, ChannelOption.MaxPendingBuffers, 64);
+    //}
 
 	// Update is called once per frame
 	void FixedUpdate () {

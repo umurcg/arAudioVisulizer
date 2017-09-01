@@ -1,4 +1,4 @@
-iOS
+WindowsStandalone
 268ef825502a475f763a8f3739ab652c Assembly-CSharp.dll:.VRIntegrationHelper
 dc07d7ad69b399a46e92c483bf1c04ca UnityEngine.Analytics.dll:UnityEngine.Analytics.AnalyticsTracker
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
@@ -116,6 +116,7 @@ e9bdabf9265d758d56f01bb188916fa8 UnityEngine.Networking.dll:UnityEngine.Networki
 0268caddfd80dcc5e7d4a0c4ba3adf40 Assembly-CSharp.dll:Vuforia.BackgroundPlaneBehaviour
 24fc33d2fc5ebf1966ff68a1f9a5217e Assembly-CSharp.dll:Vuforia.VuMarkBehaviour
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:Vuforia.DefaultInitializationErrorHandler
+9fc3ee38017934dcd5731d282a2c2177 Assembly-CSharp.dll:.AudioPeer
 215f21c984a05428dd33c8419e0a1c57 Assembly-CSharp.dll:Vuforia.SurfaceBehaviour
 01b931a31288e4cde963a06cb43a54a1 Assembly-CSharp-firstpass.dll:MovementEffects.Timing
 bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
@@ -162,7 +163,7 @@ f67e4dccde37b3c42d067b6bf680c32e Assembly-CSharp.dll:Vuforia.TextRecoBehaviour
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:Vuforia.VideoBackgroundBehaviour
 15bea26698002c6c4a3087131232ce5c Assembly-CSharp.dll:Vuforia.WordBehaviour
 3ad83d9b16897b0fec4f8b42b7498cdc Assembly-CSharp.dll:Vuforia.ObjectTargetBehaviour
-9fc3ee38017934dcd5731d282a2c2177 Assembly-CSharp.dll:.AudioPeer
+9fc3ee38017934dcd5731d282a2c2177 Assembly-CSharp.dll:.AudioPeerNetwork
 bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInput
 463516d5b5fe8e67a0a24c48f2095b04 UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInputModule
@@ -171,5 +172,7 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.VR.WSA.Spa
 8bc2adaae925278bcd7fbf7aee5d6b32 Assembly-CSharp.dll:.RotateAround
 69d7d01d14b2cb1bf7ea22ff94f3abfc Assembly-CSharp.dll:Vuforia.DefaultSmartTerrainEventHandler
 d2a2bd333db22f480a8589e167314ecc Assembly-CSharp.dll:Vuforia.UserDefinedTargetBuildingBehaviour
-6b273b82d6832087050919754354d78f Assembly-CSharp.dll:.FrequencyVisulizer
+d4f45a812a0233d97c1f355f1f27f594 Assembly-CSharp.dll:.FrequencyVisulizer
 7cac06ac0eaa7257b831c29e4455ce1b Assembly-CSharp.dll:Vuforia.VuforiaConfiguration
+8ff7debd9944c5fa836a6b18c70f4a51 Assembly-CSharp.dll:.CustomNetworkManagerHUD
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.PlayerPositionBroadcaster
