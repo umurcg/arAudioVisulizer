@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.Networking;
 using System.Linq;
+using System.Collections.Generic;
 /// <summary>
 /// Gets spectrum of frequencies at every fixed update and share this through network
 /// </summary>
@@ -15,17 +16,34 @@ public class AudioPeerNetwork : NetworkBehaviour {
     //public SyncListFloat samples =new SyncListFloat();
         
     //Frequency visulizer of scene
-    public FrequencyVisulizer visulizer;
+    //public FrequencyVisulizer[] visulizers;
+    List<FrequencyVisulizer> visulizerList;
+
 
     public int spectrumLength = 512;
 
     NetworkClient myClient;
 
 
+    private void Awake()
+    {
+        if (visulizerList == null)  visulizerList = new List<FrequencyVisulizer>();
+        //foreach(FrequencyVisulizer fv in visulizerList)
+        //{
+        //    visulizerList.Add(fv);
+        //}
+    }
+
+    [ContextMenu("Print Visulize listt")]
+    void printVisulizerList()
+    {
+        Debug.Log(visulizerList.Count);
+    }
+
     // Use this for initialization
     void Start () {
 
-
+        
                
         audioSource = GetComponent<AudioSource>();
         //If not server than there shouldn't be audio source
@@ -38,6 +56,13 @@ public class AudioPeerNetwork : NetworkBehaviour {
 
  
 	}
+
+    public void registerVisulizer(FrequencyVisulizer fv)
+    {
+        if (visulizerList == null) visulizerList = new List<FrequencyVisulizer>();
+
+        visulizerList.Add(fv);
+    }
 
     //public void OnConnected(NetworkConnection conn, NetworkReader reader)
     //{
@@ -83,7 +108,8 @@ public class AudioPeerNetwork : NetworkBehaviour {
     [ClientRpc]
     void RpcUpdateVisulizer(float[] samples)
     {
-        visulizer.updateVisulizer(samples);
+        foreach(FrequencyVisulizer fv in visulizerList)
+            fv.updateVisulizer(samples);
     }
 
 

@@ -13,10 +13,21 @@ public class FrequencyVisulizer : MonoBehaviour {
    
     public axis Axis=axis.y;
 
+    AudioPeerNetwork apn;
+
+    private void Awake()
+    {
+        //Try to find audio peer for getting sound data and updates from that
+        apn = GameObject.FindGameObjectWithTag("Audio Source").GetComponent<AudioPeerNetwork>();
 
 
-	// Use this for initialization
-	void Start () {
+        //Then register visuilizer to audio peer script
+        apn.registerVisulizer(this);
+    }
+
+
+    // Use this for initialization
+    void Start () {
         cubes = new GameObject[numberOfCubes];
 
 	    for(int i = 0; i < numberOfCubes; i++)
