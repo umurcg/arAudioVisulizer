@@ -11,7 +11,7 @@ public class FrequencyVisulizer : MonoBehaviour {
     public float maxScale = 10;
     public float cubeScale = 1;
    
-    public axis Axis=axis.y;
+    //public axis Axis=axis.y;
 
     AudioPeerNetwork apn;
 
@@ -52,21 +52,22 @@ public class FrequencyVisulizer : MonoBehaviour {
         {
             Vector3 scale = Vector3.one * cubeScale;
 
+            scale.y = samples[i] * maxScale;
 
-            switch (Axis)
-            {
-                case (axis.x):
-                    scale.x= samples[i] * maxScale;
-                    break;
-                case (axis.y):
-                    scale.y= samples[i] * maxScale;
-                    break;
-                case (axis.z):
-                    scale.z= samples[i] * maxScale;
-                    break;
+            //switch (Axis)
+            //{
+            //    case (axis.x):
+            //        scale.x= samples[i] * maxScale;
+            //        break;
+            //    case (axis.y):
+            //        scale.y= samples[i] * maxScale;
+            //        break;
+            //    case (axis.z):
+            //        scale.z= samples[i] * maxScale;
+            //        break;
 
-            }
-                
+            //}
+               
 
             //scale.y = samples[i] * maxScale;
             cubes[i].transform.localScale = scale;
