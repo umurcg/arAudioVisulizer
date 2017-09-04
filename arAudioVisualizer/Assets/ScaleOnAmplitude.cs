@@ -2,43 +2,51 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScaleOnAmplitude : MonoBehaviour {
+public class ScaleOnAmplitude : EightBandVis {
 
-    public static List<ScaleOnAmplitude> amplitudeList;
 
-    public float startScale = 1;
+
+    
     public float maxScale = 30;
     Material mat;
 
     AudioPeerNetwork apn;
-    public bool useBuffer = true;
+    
 
     public float red, green, blue;
 
 
-    private void Awake()
-    {
-
-        if (amplitudeList == null)
-        {
-            amplitudeList = new List<ScaleOnAmplitude>();
-        }
-       
-      
-        amplitudeList.Add(this);
-       
-    }
+    public float Amplitude, AmplitudeBuffer;
+    float AmplitudeHighest;
 
     // Use this for initialization
     void Start()
     {
         mat = GetComponent<MeshRenderer>().material;
 
-        //apn = AudioPeerNetwork.audioPeer;
-        //apn.registerAmplitude(this);
-
 
     }
+
+    public override void updateVisulizer(float[] samples)
+    {
+        
+
+        //Create an array with 8 elements of frequencies
+        eightBand = MakeFrequencyBands(samples);
+
+        //Buffer the bands for smooth decrease on bars
+        BandBuffer(eightBand);
+
+        //Calculate amplitude
+        GetAmplitude();
+
+        //Update scale according to amplitude
+        updateScale(Amplitude, AmplitudeBuffer);
+
+        
+
+    }
+
     // Update is called once per frame
     public void updateScale(float amplitude, float amplitudeBuffer) {
 
@@ -51,4 +59,31 @@ public class ScaleOnAmplitude : MonoBehaviour {
         
 
 	}
+
+
+    public void GetAmplitude()
+    {
+        Amplitude = 0;
+        AmplitudeBuffer = 0;
+
+        for (int i = 0; i < 8; i++)
+        {
+            Amplitude += eightBand[i];
+            AmplitudeBuffer += bandBuffer[i];
+        }
+
+        //Assign highest amplitude
+        if (Amplitude > AmplitudeHighest) AmplitudeHighest = Amplitude;
+
+        //Normilized
+        Amplitude = Amplitude / AmplitudeHighest;
+        AmplitudeBuffer = AmplitudeBuffer / AmplitudeHighest;
+              
+        
+
+    }
+
+
+
+
 }

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EightBandVis : MonoBehaviour {
+public class EightBandVis : Visulizer {
 
-    public static List<EightBandVis> eightBandVisList;
+    
 
     //AudioPeerNetwork apn;
     GameObject[] cubes = new GameObject[8];
@@ -17,6 +17,11 @@ public class EightBandVis : MonoBehaviour {
 
     float heightLevel;
 
+    public float[] eightBand=new float[8];
+    public float[] bandBuffer = new float[8];
+    public float[] bufferDecrese = new float[8];
+    float[] highestBand = new float[8];
+
 
     public bool scaleOnlyOneDirection = true;
 
@@ -28,32 +33,13 @@ public class EightBandVis : MonoBehaviour {
     public bool useBuffer = true;
 
 
-    private void Awake()
-    {
-
-        if (eightBandVisList == null)
-        {
-            eightBandVisList = new List<EightBandVis>();
-        }
-        
-        
-        eightBandVisList.Add(this);
-        
-    }
 
     // Use this for initialization
     void Start() {
-        //GameObject source = GameObject.FindGameObjectWithTag("Audio Source");
-                
-        
-        //apn = AudioPeerNetwork.audioPeer;
+     
 
         heightLevel = transform.position.y;
 
-        //if (source != null)
-        //    apn = source.GetComponent<AudioPeerNetwork>();
-
-        //apn.registerEightBand(this);
 
         if (transform.childCount!=8) createCubes();
         else
@@ -79,35 +65,80 @@ public class EightBandVis : MonoBehaviour {
         }
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    public override void updateVisulizer(float[] samples)
+    {
+        base.updateVisulizer(samples);
+        
+        //Create an array with 8 elements of frequencies
+        eightBand= MakeFrequencyBands(samples);
+
+        //Buffer the bands for smooth decrease on bars
+        BandBuffer(eightBand);
+
+        //Update band cubes
+        updateBands();
+
+        //Update colors of bands
+        updateColors(normalizeBand(eightBand));
+    }
+
+    public static float[] MakeFrequencyBands(float[] samples)
     {
 
-        //if (!apn || apn.enabled == false)
-        //{
-        //    if (!apn)
-        //    {
-        //        GameObject source = GameObject.FindGameObjectWithTag("Audio Source");
-        //        apn = source.GetComponent<AudioPeerNetwork>();
-        //    }
+        float[] frequencyBand = new float[8];
 
-        //    Debug.Log("No apn");
-        //    return;
-        //}
+        int count = 0;
 
-        //updateBands();
+        for (int i = 0; i < 8; i++)
+        {
+
+            float avarage = 0;
+            int samplesCount = (int)Mathf.Pow(2, i) * 2;
+
+            if (i == 7) samplesCount += 2;
+
+            for (int j = 0; j < samplesCount; j++)
+            {
+                avarage += samples[count] * (count + 1);
+                count++;
+            }
+
+            avarage /= count;
+
+            frequencyBand[i] = avarage * 10;
+
+        }
+             
+
+        return frequencyBand;
+
+    }
+
+    //Makes smoother downs for bars
+    protected void BandBuffer(float[] bands)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+
+            if (bands[i] > bandBuffer[i])
+            {
+                bandBuffer[i] = bands[i];
+                bufferDecrese[i] = 0.005f;
+            }
+            else
+            {
+                bandBuffer[i] -= bufferDecrese[i];
+                bufferDecrese[i] *= 1.2f;
+            }
+
+        }
+
 
     }
 
 
-
-    public void updateBands(float[] bands, float[] bandBuffer=null)
+    public void updateBands()
     {
-
-
-        //if (useBuffer && bandBuffer != null) bands = bandBuffer;
-
-        //float[] normilizedBand = (useBuffer) ? normalizeBand(bands) : normalizeBand(bandBuffer);
 
         for (int i = 0; i < cubes.Length; i++)
         {
@@ -121,7 +152,7 @@ public class EightBandVis : MonoBehaviour {
             }
             else
             {
-                scale = bands[i] * multiplier;
+                scale = eightBand[i] * multiplier;
             }
 
             cube.transform.localScale = new Vector3(cube.transform.localScale.x, scale, cube.transform.localScale.z);
@@ -136,13 +167,31 @@ public class EightBandVis : MonoBehaviour {
 
             }
 
-            //Debug.Log(emmision);
 
         }
         
     }
 
-    public void updateColors(float[] normilized)
+    public float[] normalizeBand(float[] bands)
+    {
+        float[] normilizedBand = new float[8];
+
+        for (int i = 0; i < 8; i++)
+        {
+            if (bands[i] > highestBand[i])
+            {
+                highestBand[i] = bands[i];
+
+            }
+
+            normilizedBand[i] = bands[i] / highestBand[i];
+        }
+
+        return normilizedBand;
+    }
+
+
+    public virtual void updateColors(float[] normilized)
     {
 
         for (int i = 0; i < cubes.Length; i++)

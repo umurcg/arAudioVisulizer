@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public enum axis { x=0,y=1,z=2};
 
-public class FrequencyVisulizer : MonoBehaviour {
+public class FrequencyVisulizer : Visulizer {
 
     public static List<FrequencyVisulizer> visulizerList;
 
@@ -16,44 +16,12 @@ public class FrequencyVisulizer : MonoBehaviour {
 
     float heightLevel;
 
-    //public axis Axis=axis.y;
-
-    //AudioPeerNetwork apn;
 
     public GameObject barPrefab;
 
-    //private void Start()
-    //{
-    //    //Try to find audio peer for getting sound data and updates from that
-    //    //apn = GameObject.FindGameObjectWithTag("Audio Source").GetComponent<AudioPeerNetwork>();
-
-
-    //}
-
-
-    private void Awake()
-    {
-
-        if (visulizerList == null)
-        {
-            visulizerList = new List<FrequencyVisulizer>();
-        }
-      
-         visulizerList.Add(this);
-     
-    }
 
     // Use this for initialization
     void Start () {
-
-
-
-        //apn = AudioPeerNetwork.audioPeer;
-
-
-        //Then register visuilizer to audio peer script
-        //apn.registerVisulizer(this);
-
 
         cubes = new GameObject[numberOfCubes];
 
@@ -72,7 +40,7 @@ public class FrequencyVisulizer : MonoBehaviour {
 	}
 	
 	
-    public void updateVisulizer(float[] samples)
+    public override void updateVisulizer(float[] samples)
     {
         for (int i = 0; i < numberOfCubes; i++)
         {

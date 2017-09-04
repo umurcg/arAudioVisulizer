@@ -30,11 +30,11 @@ public class CustomNetworkManagerHUD : MonoBehaviour {
         disconnectButton.gameObject.SetActive(false);
 
         //If device is mobile then disable host functionality
-#if UNITY_IOS
-        hostARScene.gameObject.SetActive(false);
-#elif UNITY_ANDROID
-        hostARScene.gameObject.SetActive(false);
-#endif
+//#if UNITY_IOS
+//        hostARScene.gameObject.SetActive(false);
+//#elif UNITY_ANDROID
+//        hostARScene.gameObject.SetActive(false);
+//#endif
 
     }
 	
