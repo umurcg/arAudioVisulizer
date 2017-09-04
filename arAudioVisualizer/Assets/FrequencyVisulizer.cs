@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public enum axis { x=0,y=1,z=2};
 
 public class FrequencyVisulizer : MonoBehaviour {
+
+    public static List<FrequencyVisulizer> visulizerList;
 
     public int numberOfCubes = 512;
     public GameObject[] cubes;
@@ -15,7 +18,7 @@ public class FrequencyVisulizer : MonoBehaviour {
 
     //public axis Axis=axis.y;
 
-    AudioPeerNetwork apn;
+    //AudioPeerNetwork apn;
 
     public GameObject barPrefab;
 
@@ -28,15 +31,28 @@ public class FrequencyVisulizer : MonoBehaviour {
     //}
 
 
+    private void Awake()
+    {
+
+        if (visulizerList == null)
+        {
+            visulizerList = new List<FrequencyVisulizer>();
+        }
+      
+         visulizerList.Add(this);
+     
+    }
+
     // Use this for initialization
     void Start () {
 
-        
-        apn = AudioPeerNetwork.audioPeer;
+
+
+        //apn = AudioPeerNetwork.audioPeer;
 
 
         //Then register visuilizer to audio peer script
-        apn.registerVisulizer(this);
+        //apn.registerVisulizer(this);
 
 
         cubes = new GameObject[numberOfCubes];

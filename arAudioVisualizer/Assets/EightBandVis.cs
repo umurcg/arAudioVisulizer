@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class EightBandVis : MonoBehaviour {
 
-    AudioPeerNetwork apn;
+    public static List<EightBandVis> eightBandVisList;
+
+    //AudioPeerNetwork apn;
     GameObject[] cubes = new GameObject[8];
     public GameObject cubePrefab;
 
@@ -26,19 +28,32 @@ public class EightBandVis : MonoBehaviour {
     public bool useBuffer = true;
 
 
+    private void Awake()
+    {
+
+        if (eightBandVisList == null)
+        {
+            eightBandVisList = new List<EightBandVis>();
+        }
+        
+        
+        eightBandVisList.Add(this);
+        
+    }
+
     // Use this for initialization
     void Start() {
         //GameObject source = GameObject.FindGameObjectWithTag("Audio Source");
                 
         
-        apn = AudioPeerNetwork.audioPeer;
+        //apn = AudioPeerNetwork.audioPeer;
 
         heightLevel = transform.position.y;
 
         //if (source != null)
         //    apn = source.GetComponent<AudioPeerNetwork>();
 
-        apn.registerEightBand(this);
+        //apn.registerEightBand(this);
 
         if (transform.childCount!=8) createCubes();
         else

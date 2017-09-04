@@ -10,7 +10,7 @@ using System.Collections.Generic;
 public class AudioPeerNetwork : NetworkBehaviour {
 
     //Singleton class
-    public static AudioPeerNetwork audioPeer;
+    //public static AudioPeerNetwork audioPeer;
 
     AudioSource audioSource;
 
@@ -28,9 +28,9 @@ public class AudioPeerNetwork : NetworkBehaviour {
 
     //Frequency visulizer of scene
     //public FrequencyVisulizer[] visulizers;
-    List<FrequencyVisulizer> visulizerList;
-    List<EightBandVis> eightBandVisList;
-    List<ScaleOnAmplitude> amplitudeList;
+    //List<FrequencyVisulizer> visulizerList;
+    //List<EightBandVis> eightBandVisList;
+    //List<ScaleOnAmplitude> amplitudeList;
     
     public int spectrumLength = 512;
 
@@ -42,20 +42,20 @@ public class AudioPeerNetwork : NetworkBehaviour {
     private void Awake()
     {
 
-        if (audioPeer == null)
-        {
-            audioPeer = this;
-        }
-        else
-        {            
-            Destroy(this);
-        }
+        //if (audioPeer == null)
+        //{
+        //    audioPeer = this;
+        //}
+        //else
+        //{            
+        //    Destroy(this);
+        //}
 
         samples = new float[spectrumLength];
 
-        if (visulizerList == null)  visulizerList = new List<FrequencyVisulizer>();
-        if (eightBandVisList == null) eightBandVisList = new List<EightBandVis>();
-        if (amplitudeList == null) amplitudeList = new List<ScaleOnAmplitude>();
+        //if (visulizerList == null)  visulizerList = new List<FrequencyVisulizer>();
+        //if (eightBandVisList == null) eightBandVisList = new List<EightBandVis>();
+        //if (amplitudeList == null) amplitudeList = new List<ScaleOnAmplitude>();
     }
 
 
@@ -78,26 +78,26 @@ public class AudioPeerNetwork : NetworkBehaviour {
  
 	}
 
-    public void registerAmplitude(ScaleOnAmplitude amp)
-    {
-        if (amplitudeList == null) amplitudeList = new List<ScaleOnAmplitude>();
+    //public void registerAmplitude(ScaleOnAmplitude amp)
+    //{
+    //    if (amplitudeList == null) amplitudeList = new List<ScaleOnAmplitude>();
 
-        amplitudeList.Add(amp);
-    }
+    //    amplitudeList.Add(amp);
+    //}
 
-    public void registerVisulizer(FrequencyVisulizer fv)
-    {
-        if (visulizerList == null) visulizerList = new List<FrequencyVisulizer>();
+    //public void registerVisulizer(FrequencyVisulizer fv)
+    //{
+    //    if (visulizerList == null) visulizerList = new List<FrequencyVisulizer>();
 
-        visulizerList.Add(fv);
-    }
+    //    visulizerList.Add(fv);
+    //}
 
-    public void registerEightBand(EightBandVis ebv)
-    {
-        if (eightBandVisList == null) eightBandVisList = new List<EightBandVis>();
+    //public void registerEightBand(EightBandVis ebv)
+    //{
+    //    if (eightBandVisList == null) eightBandVisList = new List<EightBandVis>();
 
-        eightBandVisList.Add(ebv);
-    }
+    //    eightBandVisList.Add(ebv);
+    //}
 
 
 
@@ -182,7 +182,7 @@ public class AudioPeerNetwork : NetworkBehaviour {
 
         BandBuffer(eightBand);
 
-        RpcUpdateEightBands(eightBand, bandBuffer);
+        RpcUpdateEightBands(eightBand, bandBuffer, bufferDecrese);
 
         return frequencyBand;
 
@@ -206,7 +206,7 @@ public class AudioPeerNetwork : NetworkBehaviour {
         amplitude = amplitude / AmplitudeHighest;
         amplitudeBuffer = amplitudeBuffer / AmplitudeHighest;
 
-        RpcUpdateScaleAmplitude();
+        RpcUpdateScaleAmplitude(amplitude, amplitudeBuffer);
 
         
 
@@ -217,32 +217,58 @@ public class AudioPeerNetwork : NetworkBehaviour {
     {
         this.samples = samples;
 
-        foreach(FrequencyVisulizer fv in visulizerList)
-            fv.updateVisulizer(samples);
-    }
-
-    [ClientRpc]
-    void RpcUpdateEightBands(float[] bands, float[] bandBuffer)
-    {
-        this.eightBand = bands;
-        this.bandBuffer = bandBuffer;
-
-
-        foreach(EightBandVis ebv in eightBandVisList)
+        if (FrequencyVisulizer.visulizerList != null)
         {
-            ebv.updateBands(bands, bandBuffer);
-            ebv.updateColors(normalizeBand(bands));
+            //Debug.Log("Number of visulizer is " + FrequencyVisulizer.visulizerList.Count);
+            foreach (FrequencyVisulizer fv in FrequencyVisulizer.visulizerList)
+                fv.updateVisulizer(samples);
+        }
+        else
+        {
+            Debug.Log("Coudlnt found any frequency visulizer script.");
         }
     }
 
     [ClientRpc]
-    void RpcUpdateScaleAmplitude()
-    {    
-        
-        foreach(ScaleOnAmplitude soa in amplitudeList)
+    void RpcUpdateEightBands(float[] bands, float[] bandBuffer, float[] bufferDecrease)
+    {
+        this.eightBand = bands;
+        this.bandBuffer = bandBuffer;
+        this.bufferDecrese = bufferDecrease;
+
+        if (EightBandVis.eightBandVisList != null)
         {
-            soa.updateScale(Amplitude, AmplitudeBuffer);
-        } 
+            foreach (EightBandVis ebv in EightBandVis.eightBandVisList)
+            {
+                ebv.updateBands(bands, bandBuffer);
+                ebv.updateColors(normalizeBand(bands));
+            }
+
+
+        }
+        else
+        {
+            Debug.Log("Coudlnt found any eigh band vis script.");
+        }
+    }
+
+    [ClientRpc]
+    void RpcUpdateScaleAmplitude(float Amplitude, float AmplitudeBuffer)
+    {
+        this.Amplitude = Amplitude;
+        this.AmplitudeBuffer = AmplitudeBuffer;
+
+        if (ScaleOnAmplitude.amplitudeList != null)
+        {
+            foreach (ScaleOnAmplitude soa in ScaleOnAmplitude.amplitudeList)
+            {
+                soa.updateScale(Amplitude, AmplitudeBuffer);
+            }
+        }
+        else
+        {
+            Debug.Log("Coudlnt found any scale on amlitude script.");
+        }
 
     }
 

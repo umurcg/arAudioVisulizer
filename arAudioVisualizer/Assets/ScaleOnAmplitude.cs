@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ScaleOnAmplitude : MonoBehaviour {
 
+    public static List<ScaleOnAmplitude> amplitudeList;
+
     public float startScale = 1;
     public float maxScale = 30;
     Material mat;
@@ -13,13 +15,27 @@ public class ScaleOnAmplitude : MonoBehaviour {
 
     public float red, green, blue;
 
+
+    private void Awake()
+    {
+
+        if (amplitudeList == null)
+        {
+            amplitudeList = new List<ScaleOnAmplitude>();
+        }
+       
+      
+        amplitudeList.Add(this);
+       
+    }
+
     // Use this for initialization
     void Start()
     {
         mat = GetComponent<MeshRenderer>().material;
 
-        apn = AudioPeerNetwork.audioPeer;
-        apn.registerAmplitude(this);
+        //apn = AudioPeerNetwork.audioPeer;
+        //apn.registerAmplitude(this);
 
 
     }
