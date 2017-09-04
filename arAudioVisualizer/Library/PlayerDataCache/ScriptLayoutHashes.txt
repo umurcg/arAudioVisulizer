@@ -18,6 +18,7 @@ a9ceaad7d51aada88335b5bf9c0e71a4 Assembly-CSharp.dll:Vuforia.ReconstructionBehav
 7481472d4e57e8477d484d43a43b79dc Assembly-CSharp-firstpass.dll:UnityStandardAssets.Characters.FirstPerson.FirstPersonController
 8ff7debd9944c5fa836a6b18c70f4a51 Assembly-CSharp.dll:.CustomNetworkManagerHUD
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:Vuforia.TurnOffBehaviour
+53ec184d06a92f5339131fb54e9fc664 Assembly-CSharp.dll:.ScaleOnAmplitude
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:Vuforia.GLErrorHandler
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp-firstpass.dll:.EventSystemChecker
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:Vuforia.ComponentFactoryStarterBehaviour
@@ -201,7 +202,7 @@ d2af69ce28cda6fcf0b7728ae3f251b4 Assembly-CSharp-firstpass.dll:UnityStandardAsse
 15bea26698002c6c4a3087131232ce5c Assembly-CSharp.dll:Vuforia.WordBehaviour
 602017ac837ce39de79e6b98478ee720 Assembly-CSharp-firstpass.dll:UnityStandardAssets.Utility.SimpleActivatorMenu
 3ad83d9b16897b0fec4f8b42b7498cdc Assembly-CSharp.dll:Vuforia.ObjectTargetBehaviour
-5f5bc75d22dc457c2a352a237eb593f2 Assembly-CSharp.dll:.AudioPeerNetwork
+f82fd7b26792e552a2531cf8dcdcd9fd Assembly-CSharp.dll:.AudioPeerNetwork
 bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInput
 463516d5b5fe8e67a0a24c48f2095b04 UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInputModule
@@ -214,6 +215,7 @@ b7f557c19cce3b6f593e26edfe1ec859 Assembly-CSharp-firstpass.dll:UnityStandardAsse
 0ad469aca31264c6140b1e503c43ab6b Assembly-CSharp-firstpass.dll:UnityStandardAssets.Utility.TimedObjectDestructor
 69d7d01d14b2cb1bf7ea22ff94f3abfc Assembly-CSharp.dll:Vuforia.DefaultSmartTerrainEventHandler
 bfca69284759c6088c542a52b5c30b75 Assembly-CSharp.dll:.SpawnObject
+fe14c237d8888e2ee9d5ecd216dda641 Assembly-CSharp.dll:.EightBandVis
 d2a2bd333db22f480a8589e167314ecc Assembly-CSharp.dll:Vuforia.UserDefinedTargetBuildingBehaviour
 83d4b46811c47a71daa5b6aed30f3c32 Assembly-CSharp.dll:.PlayerController
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp-firstpass.dll:UnityStandardAssets.Utility.FPSCounter
@@ -222,4 +224,4 @@ dd5481137759597d614818793c90a7fe Assembly-CSharp.dll:.FPSMovement
 092ae93b22c2f4bfcfe82734d2c5471c Assembly-CSharp.dll:.FrequencyVisulizer
 0f3d4bb7128a287827d041c696039525 Assembly-CSharp-firstpass.dll:UnityStandardAssets.Utility.AutoMobileShaderSwitch
 7cac06ac0eaa7257b831c29e4455ce1b Assembly-CSharp.dll:Vuforia.VuforiaConfiguration
-eec99b2554fb79f47360dc7483a10eb1 Assembly-CSharp.dll:.EightBandVis
+a5ce5c5f56fa74ffa5a1356fb65c0c98 Assembly-CSharp.dll:.CreateObjectAroundSphere

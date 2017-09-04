@@ -16,6 +16,8 @@ public class EightBandVis : MonoBehaviour {
     float heightLevel;
 
 
+    public bool scaleOnlyOneDirection = true;
+
     //float[] bandBuffer = new float[8];
     //float[] bufferDecrese = new float[8];
 
@@ -38,16 +40,28 @@ public class EightBandVis : MonoBehaviour {
 
         apn.registerEightBand(this);
 
+        if (transform.childCount!=8) createCubes();
+        else
+        {
+            for(int i=0;i<transform.childCount; i++)
+            {
+                cubes[i] = transform.GetChild(i).gameObject;
+            }
+        }
+   
+
+    }
+
+    void createCubes()
+    {
         for (int i = 0; i < 8; i++)
         {
             GameObject spawnedCube = Instantiate(cubePrefab, transform);
             spawnedCube.transform.localScale = Vector3.one * startScale;
             spawnedCube.transform.position = transform.position + transform.right * space * i;
             cubes[i] = spawnedCube;
-
-
+            
         }
-
     }
 
     // Update is called once per frame
@@ -97,11 +111,15 @@ public class EightBandVis : MonoBehaviour {
 
             cube.transform.localScale = new Vector3(cube.transform.localScale.x, scale, cube.transform.localScale.z);
 
-            Vector3 pos = cube.transform.position;
-            pos.y = heightLevel + scale / 2;
+            if (scaleOnlyOneDirection)
+            {
 
-            cube.transform.position = pos;
+                Vector3 pos = cube.transform.position;
+                pos.y = heightLevel + scale / 2;
 
+                cube.transform.position = pos;
+
+            }
 
             //Debug.Log(emmision);
 

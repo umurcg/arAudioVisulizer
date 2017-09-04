@@ -22,16 +22,20 @@ public class AudioPeerNetwork : NetworkBehaviour {
     
     float[] highestBand = new float[8];
 
+    public float Amplitude, AmplitudeBuffer;
+    float AmplitudeHighest;
+
+
     //Frequency visulizer of scene
     //public FrequencyVisulizer[] visulizers;
     List<FrequencyVisulizer> visulizerList;
     List<EightBandVis> eightBandVisList;
+    List<ScaleOnAmplitude> amplitudeList;
     
-
-
     public int spectrumLength = 512;
 
     NetworkClient myClient;
+
 
 
 
@@ -51,13 +55,10 @@ public class AudioPeerNetwork : NetworkBehaviour {
 
         if (visulizerList == null)  visulizerList = new List<FrequencyVisulizer>();
         if (eightBandVisList == null) eightBandVisList = new List<EightBandVis>();
+        if (amplitudeList == null) amplitudeList = new List<ScaleOnAmplitude>();
     }
 
-    //[ContextMenu("Print Visulize listt")]
-    //void printVisulizerList()
-    //{
-    //    Debug.Log(visulizerList.Count);
-    //}
+
 
     // Use this for initialization
     void Start () {        
@@ -76,6 +77,13 @@ public class AudioPeerNetwork : NetworkBehaviour {
 
  
 	}
+
+    public void registerAmplitude(ScaleOnAmplitude amp)
+    {
+        if (amplitudeList == null) amplitudeList = new List<ScaleOnAmplitude>();
+
+        amplitudeList.Add(amp);
+    }
 
     public void registerVisulizer(FrequencyVisulizer fv)
     {
@@ -101,7 +109,8 @@ public class AudioPeerNetwork : NetworkBehaviour {
          //If server than get spectrum from audio
         GetSpectrumAudioSource();
         MakeFrequencyBands(samples);
-	}
+        GetAmplitude(out Amplitude, out AmplitudeBuffer);
+    }
 
     public float[] GetSpectrumAudioSource()
     {
@@ -179,6 +188,30 @@ public class AudioPeerNetwork : NetworkBehaviour {
 
     }
 
+    public void GetAmplitude(out float  amplitude, out float  amplitudeBuffer)
+    {
+        amplitude = 0;
+        amplitudeBuffer = 0;
+
+        for(int i = 0; i < 8; i++)
+        {
+            amplitude += eightBand[i];
+            amplitudeBuffer += bandBuffer[i];
+        }
+
+        //Assign highest amplitude
+        if (amplitude > AmplitudeHighest) AmplitudeHighest = amplitude;
+
+        //Normilized
+        amplitude = amplitude / AmplitudeHighest;
+        amplitudeBuffer = amplitudeBuffer / AmplitudeHighest;
+
+        RpcUpdateScaleAmplitude();
+
+        
+
+    }
+
     [ClientRpc]
     void RpcUpdateVisulizer(float[] samples)
     {
@@ -194,11 +227,23 @@ public class AudioPeerNetwork : NetworkBehaviour {
         this.eightBand = bands;
         this.bandBuffer = bandBuffer;
 
+
         foreach(EightBandVis ebv in eightBandVisList)
         {
             ebv.updateBands(bands, bandBuffer);
             ebv.updateColors(normalizeBand(bands));
         }
+    }
+
+    [ClientRpc]
+    void RpcUpdateScaleAmplitude()
+    {    
+        
+        foreach(ScaleOnAmplitude soa in amplitudeList)
+        {
+            soa.updateScale(Amplitude, AmplitudeBuffer);
+        } 
+
     }
 
 
