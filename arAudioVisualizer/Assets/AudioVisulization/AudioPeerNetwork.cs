@@ -9,15 +9,24 @@ using System.Collections.Generic;
 
 public class AudioPeerNetwork : NetworkBehaviour {
 
-    
+    //Singleton class
+    public static AudioPeerNetwork audioPeer;
+
     AudioSource audioSource;
+
+    public float[] samples;
+    public float[] eightBand;
+
+    public float[] bandBuffer = new float[8];
+    public float[] bufferDecrese = new float[8];
     
-    //Samples should be get at every update. After assigning samples every frequency visulize must be updated in network
-    //public SyncListFloat samples =new SyncListFloat();
-        
+    float[] highestBand = new float[8];
+
     //Frequency visulizer of scene
     //public FrequencyVisulizer[] visulizers;
     List<FrequencyVisulizer> visulizerList;
+    List<EightBandVis> eightBandVisList;
+    
 
 
     public int spectrumLength = 512;
@@ -25,32 +34,43 @@ public class AudioPeerNetwork : NetworkBehaviour {
     NetworkClient myClient;
 
 
+
     private void Awake()
     {
+
+        if (audioPeer == null)
+        {
+            audioPeer = this;
+        }
+        else
+        {            
+            Destroy(this);
+        }
+
+        samples = new float[spectrumLength];
+
         if (visulizerList == null)  visulizerList = new List<FrequencyVisulizer>();
-        //foreach(FrequencyVisulizer fv in visulizerList)
-        //{
-        //    visulizerList.Add(fv);
-        //}
+        if (eightBandVisList == null) eightBandVisList = new List<EightBandVis>();
     }
 
-    [ContextMenu("Print Visulize listt")]
-    void printVisulizerList()
-    {
-        Debug.Log(visulizerList.Count);
-    }
+    //[ContextMenu("Print Visulize listt")]
+    //void printVisulizerList()
+    //{
+    //    Debug.Log(visulizerList.Count);
+    //}
 
     // Use this for initialization
-    void Start () {
-
-        
+    void Start () {        
                
         audioSource = GetComponent<AudioSource>();
+        VoiceRecorder recorder = GetComponent<VoiceRecorder>();
+
         //If not server than there shouldn't be audio source
         if (!isServer)
         {
             Debug.Log("Destroying source");
             Destroy(audioSource);
+            Destroy(recorder);
         }
   
 
@@ -64,54 +84,164 @@ public class AudioPeerNetwork : NetworkBehaviour {
         visulizerList.Add(fv);
     }
 
-    //public void OnConnected(NetworkConnection conn, NetworkReader reader)
-    //{
-    //   conn.SetChannelOption(Channels.DefaultReliable, ChannelOption.MaxPendingBuffers, 64);
-    //    Debug.Log("New client is connected");
-    //}
+    public void registerEightBand(EightBandVis ebv)
+    {
+        if (eightBandVisList == null) eightBandVisList = new List<EightBandVis>();
+
+        eightBandVisList.Add(ebv);
+    }
 
 
-    //[ContextMenu("Change pending buffer rate")]
-    //public void setChannelBufferLimit()
-    //{
-    //    connectionToClient.SetChannelOption(Channels.DefaultReliable, ChannelOption.MaxPendingBuffers, 64);
-    //}
 
 	// Update is called once per frame
 	void FixedUpdate () {
 
-        //If server than get spectrum from audio
-        if (isServer) GetSpectrumAudioSource();
+        if (!isServer) return;
+
+         //If server than get spectrum from audio
+        GetSpectrumAudioSource();
+        MakeFrequencyBands(samples);
 	}
 
-    void GetSpectrumAudioSource()
+    public float[] GetSpectrumAudioSource()
     {
         //If no audio clip then return
-        if (audioSource.clip == null) return;
+        if (audioSource.clip == null) return null;
 
         //create float array for spectrum
         float[] samplesArray=new float[spectrumLength];
+
+        //Kepp track samples, so other scripts can get without calling this function
+        samples = samplesArray;
         
         //get spectrum data
         audioSource.GetSpectrumData(samplesArray, 0, FFTWindow.Blackman);
 
-        ////Fill sample sync array 
-        //for(int i = 0; i < spectrumLength; i++)
-        //{
-        //    samples[i] = samplesArray[i];
-        //}
-
         //Update all visulizer in network
         RpcUpdateVisulizer(samplesArray);
+
+        return samplesArray;
+    }
+
+    public float[] MakeFrequencyBands(float[] samples)
+    {
+        /*
+        20-60 Hertz
+        60-250 Hertz
+        250-600Hertz
+        500-2000 Hertz
+        2000- 4000 Hertz
+        4000-6000Hertz
+        6000-20000Hertz
+
+        0-2
+        1-4
+        2-8
+        3-16
+        4-32
+        5-64
+        6-128
+        7-256
+        510 + 2
+         */
+
+        float[] frequencyBand=new float[8];
+
+        int count = 0;
+
+        for(int i = 0; i < 8; i++)
+        {
+
+            float avarage = 0;
+            int samplesCount = (int)Mathf.Pow(2, i) * 2;
+
+            if (i == 7) samplesCount += 2;
+
+            for(int j = 0; j < samplesCount; j++)
+            {
+                avarage += samples[count] * (count+1);
+                count++;
+            }
+
+            avarage /= count;
+
+            frequencyBand[i] = avarage * 10;
+            
+        }
+
+        eightBand = frequencyBand;
+
+        BandBuffer(eightBand);
+
+        RpcUpdateEightBands(eightBand, bandBuffer);
+
+        return frequencyBand;
+
     }
 
     [ClientRpc]
     void RpcUpdateVisulizer(float[] samples)
     {
+        this.samples = samples;
+
         foreach(FrequencyVisulizer fv in visulizerList)
             fv.updateVisulizer(samples);
     }
 
+    [ClientRpc]
+    void RpcUpdateEightBands(float[] bands, float[] bandBuffer)
+    {
+        this.eightBand = bands;
+        this.bandBuffer = bandBuffer;
+
+        foreach(EightBandVis ebv in eightBandVisList)
+        {
+            ebv.updateBands(bands, bandBuffer);
+            ebv.updateColors(normalizeBand(bands));
+        }
+    }
 
 
+    float[] normalizeBand(float[] bands)
+    {
+        float[] normilizedBand = new float[8];
+
+        for (int i = 0; i < 8; i++)
+        {
+            if (bands[i] > highestBand[i])
+            {
+                highestBand[i] = bands[i];
+
+            }
+
+            normilizedBand[i] = bands[i] / highestBand[i];
+        }
+
+        return normilizedBand;
+    }
+
+    //Makes smoother downs for bars
+    void BandBuffer(float[] bands)
+    {
+
+
+        for (int i = 0; i < 8; i++)
+        {
+
+            if (bands[i] > bandBuffer[i])
+            {
+                bandBuffer[i] = bands[i];
+                bufferDecrese[i] = 0.005f;
+            }
+            else
+            {
+                bandBuffer[i] -= bufferDecrese[i];
+                bufferDecrese[i] *= 1.2f;
+            }
+
+        }
+
+
+
+    }
 }

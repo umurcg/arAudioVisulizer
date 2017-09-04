@@ -10,29 +10,42 @@ public class FrequencyVisulizer : MonoBehaviour {
     public float radius;
     public float maxScale = 10;
     public float cubeScale = 1;
-   
+
+    float heightLevel;
+
     //public axis Axis=axis.y;
 
     AudioPeerNetwork apn;
 
-    private void Awake()
-    {
-        //Try to find audio peer for getting sound data and updates from that
-        apn = GameObject.FindGameObjectWithTag("Audio Source").GetComponent<AudioPeerNetwork>();
+    public GameObject barPrefab;
+
+    //private void Start()
+    //{
+    //    //Try to find audio peer for getting sound data and updates from that
+    //    //apn = GameObject.FindGameObjectWithTag("Audio Source").GetComponent<AudioPeerNetwork>();
 
 
-        //Then register visuilizer to audio peer script
-        apn.registerVisulizer(this);
-    }
+    //}
 
 
     // Use this for initialization
     void Start () {
+
+        
+        apn = AudioPeerNetwork.audioPeer;
+
+
+        //Then register visuilizer to audio peer script
+        apn.registerVisulizer(this);
+
+
         cubes = new GameObject[numberOfCubes];
 
-	    for(int i = 0; i < numberOfCubes; i++)
+        heightLevel = transform.position.y;
+
+        for (int i = 0; i < numberOfCubes; i++)
         {
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject cube = Instantiate(barPrefab);
             cube.transform.position = getPosOnCricle(transform.position, radius, i * 360 / numberOfCubes);
             cube.transform.LookAt(transform.position);
             cube.transform.parent = transform;
@@ -45,32 +58,16 @@ public class FrequencyVisulizer : MonoBehaviour {
 	
     public void updateVisulizer(float[] samples)
     {
-
-
-
         for (int i = 0; i < numberOfCubes; i++)
         {
             Vector3 scale = Vector3.one * cubeScale;
-
             scale.y = samples[i] * maxScale;
 
-            //switch (Axis)
-            //{
-            //    case (axis.x):
-            //        scale.x= samples[i] * maxScale;
-            //        break;
-            //    case (axis.y):
-            //        scale.y= samples[i] * maxScale;
-            //        break;
-            //    case (axis.z):
-            //        scale.z= samples[i] * maxScale;
-            //        break;
-
-            //}
-               
-
-            //scale.y = samples[i] * maxScale;
             cubes[i].transform.localScale = scale;
+
+            Vector3 pos = cubes[i].transform.position;
+            pos.y = heightLevel + (scale.y / 2);
+            cubes[i].transform.position = pos;
 
         }
     }
@@ -80,6 +77,8 @@ public class FrequencyVisulizer : MonoBehaviour {
         angle = angle * Mathf.Deg2Rad;
         return center + (Mathf.Sin(angle) * transform.right + Mathf.Cos(angle) * transform.forward) * radius;
     }
+
+
 
 
 }
