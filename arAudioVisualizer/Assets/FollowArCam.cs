@@ -5,11 +5,15 @@ using UnityEngine;
 public class FollowArCam : MonoBehaviour {
 
     public GameObject arCam;
+    public bool useOffset;
+    Vector3 offset;
 
 	// Use this for initialization
 	void Start () {
 
-        arCam = GameObject.FindGameObjectWithTag("ARCamera");
+
+        if(arCam==null)
+            arCam = GameObject.FindGameObjectWithTag("ARCamera");
         
         if(arCam==null)
         {
@@ -18,12 +22,14 @@ public class FollowArCam : MonoBehaviour {
             return;
         }
 
+        offset = transform.position - arCam.transform.position;
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        transform.position = arCam.transform.position;
+        transform.position = (useOffset)? arCam.transform.position+offset : arCam.transform.position;
 
 	}
 }

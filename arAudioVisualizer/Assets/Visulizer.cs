@@ -7,7 +7,7 @@ public class Visulizer : MonoBehaviour {
     public static List<Visulizer> visulizers;
 
 
-    float[] samples;
+    protected float[] samples;
 
 
     public static void updateAllVisulizers(float[] samples)
@@ -21,13 +21,24 @@ public class Visulizer : MonoBehaviour {
     }
 
 
-	public virtual void Awake()
+	public virtual void OnEnable()
     {
         if(visulizers==null)
             visulizers = new List<Visulizer>();
 
         visulizers.Add(this);
     }
+
+    public virtual void OnDisable()
+    {
+        if (visulizers.Contains(this)) visulizers.Remove(this);
+    }
+
+    public virtual void OnDestroy()
+    {
+        if (visulizers.Contains(this)) visulizers.Remove(this);
+    }
+
 
     //Send samples with this method
     public virtual void updateVisulizer(float[] samples)
